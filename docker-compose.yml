@@ -27,18 +27,17 @@ services:
     build: ./frontend
     container_name: test1_frontend
     restart: unless-stopped
-    # Eliminamos el "ports: 80:80" de aquí
     depends_on:
       - backend
     networks:
       - internal_app_network
-      - proxy_network # <-- Lo conectamos también a la red de NPM
+      - proxy_network
 
 networks:
   internal_app_network:
     driver: bridge
   proxy_network:
-    external: true # <-- Le decimos que esta red ya existe (la creamos en el Paso 1)
+    external: true
 
 volumes:
   pgdata:
