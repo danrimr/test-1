@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15-alpine
     container_name: test1_db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: rootpassword
@@ -15,7 +15,7 @@ services:
   backend:
     build: ./backend
     container_name: test1_backend
-    restart: always
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://root:rootpassword@db:5432/counter_db
     depends_on:
@@ -26,7 +26,7 @@ services:
   frontend:
     build: ./frontend
     container_name: test1_frontend
-    restart: always
+    restart: unless-stopped
     # Eliminamos el "ports: 80:80" de aquí
     depends_on:
       - backend
