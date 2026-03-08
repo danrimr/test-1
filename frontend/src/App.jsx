@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
-      <h1>Contador Dockerizado v3.0</h1>
+      <h1>Contador Dockerizado v3.5, ultimo</h1>
       <h2>{count}</h2>
       <button onClick={increment} style={{ padding: '10px 20px', fontSize: '16px' }}>
         Incrementar Contador
