@@ -1,7 +1,8 @@
 services:
   db:
     image: postgres:15-alpine
-    container_name: mi_db
+    container_name: test1_db
+    restart: always
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: rootpassword
@@ -9,33 +10,35 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - internal_network
-    # FÍJATE: No hay sección "ports". No se puede acceder desde afuera.
+      - internal_app_network
 
   backend:
     build: ./backend
-    container_name: mi_backend
+    container_name: test1_backend
+    restart: always
     environment:
       DATABASE_URL: postgresql://root:rootpassword@db:5432/counter_db
     depends_on:
       - db
     networks:
-      - internal_network
-    # FÍJATE: No hay sección "ports". No se puede acceder desde afuera.
+      - internal_app_network
 
   frontend:
     build: ./frontend
-    container_name: mi_frontend
-    ports:
-      - "80:80" # EL ÚNICO PUERTO EXPUESTO
+    container_name: test1_frontend
+    restart: always
+    # Eliminamos el "ports: 80:80" de aquí
     depends_on:
       - backend
     networks:
-      - internal_network
+      - internal_app_network
+      - proxy_network # <-- Lo conectamos también a la red de NPM
 
 networks:
-  internal_network:
+  internal_app_network:
     driver: bridge
+  proxy_network:
+    external: true # <-- Le decimos que esta red ya existe (la creamos en el Paso 1)
 
 volumes:
   pgdata:
