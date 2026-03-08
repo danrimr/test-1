@@ -10,20 +10,20 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Pull and Restart Docker
+        run: |
+          # 1. Ir a la carpeta
+          cd /var/www/test-1
 
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22 # O el puerto SSH que uses
-          script: |
-            cd /var/www/test-1
-            git pull origin main
-            # Usamos --build para que Docker detecte cambios en el código
-            docker compose up -d --build
-            # Limpiar imágenes viejas que ya no se usan para no llenar el disco
-            docker image prune -f
+          # 2. Limpiar cualquier cambio local que bloquee el pull (por si acaso)
+          git reset --hard origin/main
+
+          # 3. Bajar los cambios
+          git pull origin main
+
+          # 4. Reconstruir (usamos el comando moderno 'docker compose')
+          # Si tu sistema usa el viejo 'docker-compose' con guión, cámbialo abajo
+          docker compose up -d --build
+
+          # 5. Limpieza
+          docker image prune -f
